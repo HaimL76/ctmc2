@@ -113,32 +113,30 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
         if not inside_box:
             _ = 0
 
-        if True:
-            if level not in dict_boxes:
-                dict_boxes[level] = []
+        if inside_box:
+            if box_top - box_bottom > 1 and box_right - box_left > 1:
+                row_start = box_bottom
+                col_start = box_left
 
-            list0: list[(((int, int), (int, int)), bool)] = dict_boxes[level]
+                row_middle = (box_bottom + box_top) / 2
+                col_middle = (box_left + box_right) / 2
 
-            list0.append((box0, not inside_box))
+                row_end = box_top
+                col_end = box_right
 
-            if box_top - box_bottom < 1 or box_right - box_left < 1:
-                return
-
-            row_start = box_bottom
-            col_start = box_left
-
-            row_middle = (box_bottom + box_top) / 2
-            col_middle = (box_left + box_right) / 2
-
-            row_end = box_top
-            col_end = box_right
-
-            list_boxes_new: list[((int, int), (int, int))] = [((col_start, row_start), (col_middle, row_middle)),
+                list_boxes_new: list[((int, int), (int, int))] = [((col_start, row_start), (col_middle, row_middle)),
                                                               ((col_middle, row_start), (col_end, row_middle)),
                                                               ((col_start, row_middle), (col_middle, row_end)),
                                                               ((col_middle, row_middle), (col_end, row_end))]
 
-            calculate_box_counting(xs, list_boxes=list_boxes_new, dict_boxes=dict_boxes, level=level + 1)
+                calculate_box_counting(xs, list_boxes=list_boxes_new, dict_boxes=dict_boxes, level=level + 1)
+            else:
+                if level not in dict_boxes:
+                    dict_boxes[level] = []
+
+                list0: list[(((int, int), (int, int)), bool)] = dict_boxes[level]
+
+                list0.append((box0, inside_box))
 
 
 
