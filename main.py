@@ -96,21 +96,21 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
         if box_top - box_bottom < 2 or box_right - box_left < 2:
             return
 
-        line_row_max: int = -999999# max_int * -1
-        line_row_min: int = 999999# max_int
+        col = box_left
 
-        for col in range(box_left, box_right):
-            x = int(xs[col])
+        inside_box: bool = False
 
-            if x < line_row_min:
-                line_row_min = x
+        while not inside_box and col < box_right:
+            val = xs[col]
+            col += 1
 
-            if x > line_row_max:
-                line_row_max = x
+            if box_bottom <= val <= box_top:
+                inside_box = True
 
-        outside: bool = line_row_max < box_bottom or line_row_min > box_top
+        if not inside_box:
+            _ = 0
 
-        if not outside:
+        if inside_box:
             if level not in dict_boxes:
                 dict_boxes[level] = []
 
