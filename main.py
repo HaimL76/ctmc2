@@ -1,4 +1,5 @@
 import copy
+import sys
 from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,7 +11,9 @@ def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 1):
 
     # Take colors at regular intervals spanning the colormap.
     #colors = cmap(np.linspace(0, 1, 256))
-
+    limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(15000000)
+    limit = sys.getrecursionlimit()
     colors = ["red", "yellow", "orange", "green", "blue", "pink", "purple", "lightgreen", "lightblue"]
 
     arr: list[list[int]] = [[]] * num_simulations
@@ -90,6 +93,8 @@ def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 1):
 def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, int))], dict_boxes: [int, list[((int, int), (int, int))]], level):
     max_int: int = 2 ** 63 - 1
 
+    print(f"level: {level}")
+
     for box in list_boxes:
         box0 = copy.deepcopy(box)
 
@@ -120,7 +125,10 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
             _ = 0
 
         if inside_box:
-            if box_top - box_bottom > 1 and box_right - box_left > 1:
+            height = box_top - box_bottom
+            width = box_right - box_left
+
+            if height > 1 or width > 1:
                 row_start = box_bottom
                 col_start = box_left
 
@@ -130,10 +138,19 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
                 row_end = box_top
                 col_end = box_right
 
-                list_boxes_new: list[((int, int), (int, int))] = [((col_start, row_start), (col_middle, row_middle)),
-                                                              ((col_middle, row_start), (col_end, row_middle)),
-                                                              ((col_start, row_middle), (col_middle, row_end)),
-                                                              ((col_middle, row_middle), (col_end, row_end))]
+                list_boxes_new: list[((int, int), (int, int))] = []
+
+                if height > 1 and width > 1:
+                    list_boxes_new.append(((col_start, row_start), (col_middle, row_middle)))
+                    list_boxes_new.append(((col_middle, row_start), (col_end, row_middle)))
+                    list_boxes_new.append(((col_start, row_middle), (col_middle, row_end)))
+                    list_boxes_new.append(((col_middle, row_middle), (col_end, row_end)))
+                elif height > 1:
+                    list_boxes_new.append(((col_start, row_start), (col_end, row_middle)))
+                    list_boxes_new.append(((col_start, row_middle), (col_end, row_end)))
+                elif width > 1:
+                    list_boxes_new.append(((col_start, row_start), (col_middle, row_end)))
+                    list_boxes_new.append(((col_middle, row_start), (col_end, row_end)))
 
                 calculate_box_counting(xs, list_boxes=list_boxes_new, dict_boxes=dict_boxes, level=level + 1)
             else:
