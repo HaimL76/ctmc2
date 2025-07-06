@@ -3,10 +3,16 @@ from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+import matplotlib as mpl
 
+def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 1):
+    #cmap = mpl.colormaps['plasma']
 
-def run_simulation(x0: int = 0, t_range: int = 50, num_simulations: int = 1):
-    colors = ["lightgreen", "lightblue", "yellow", "orange", "pink", "skyblue", "olive", "red"]
+    # Take colors at regular intervals spanning the colormap.
+    #colors = cmap(np.linspace(0, 1, 256))
+
+    colors = ["red", "yellow", "orange", "green", "blue", "pink", "purple", "lightgreen", "lightblue"]
+
     arr: list[list[int]] = [[]] * num_simulations
 
     dict_boxes = {}
@@ -69,12 +75,12 @@ def run_simulation(x0: int = 0, t_range: int = 50, num_simulations: int = 1):
             height = box_top - box_bottom
             width = box_right - box_left
 
-            color = colors[level] if box0[1] else "none"
+            color = colors[level % len(colors)] if box0[1] else "none"
 
             ax.add_patch(Rectangle((box_left, box_bottom), width, height, facecolor=color,
                 edgecolor='black', lw=0.7))
 
-            print(f"({box_left}, {box_bottom}), {width}, {height}")
+            #print(f"({box_left}, {box_bottom}), {width}, {height}")
         #matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
 
     plt.legend(loc="upper left")
@@ -108,7 +114,7 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
             if box_bottom <= val <= box_top:
                 inside_box = True
             else:
-                print(f"{box_bottom}, {val}, {box_top}")
+                _ = 0#print(f"{box_bottom}, {val}, {box_top}")
 
         if not inside_box:
             _ = 0
