@@ -6,7 +6,7 @@ from matplotlib.patches import Rectangle
 
 
 def run_simulation(x0: int = 0, t_range: int = 50, num_simulations: int = 1):
-    colors = ["lightgreen", "lightblue", "yellow", "orange", "pink", "skyblue", "olive"]
+    colors = ["lightgreen", "lightblue", "yellow", "orange", "pink", "skyblue", "olive", "red"]
     arr: list[list[int]] = [[]] * num_simulations
 
     dict_boxes = {}
@@ -119,7 +119,7 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
 
             list0: list[(((int, int), (int, int)), bool)] = dict_boxes[level]
 
-            list0.append((box0, inside_box))
+            list0.append((box0, not inside_box))
 
             if box_top - box_bottom < 1 or box_right - box_left < 1:
                 return
