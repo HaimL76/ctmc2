@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 
-def run_simulation(x0: int = 0, t_range: int = 200, num_simulations: int = 1):
+def run_simulation(x0: int = 0, t_range: int = 50, num_simulations: int = 1):
+    colors = ["lightgreen", "lightblue", "yellow", "orange", "pink", "skyblue", "olive"]
     arr: list[list[int]] = [[]] * num_simulations
 
     dict_boxes = {}
@@ -45,10 +46,6 @@ def run_simulation(x0: int = 0, t_range: int = 200, num_simulations: int = 1):
 
     counter: int = 1
 
-    max_key = max(dict_boxes.keys())
-
-    list0 = dict_boxes[max_key]
-
     for arr0 in arr:
         xpoints = np.arange(0, t_range)
         ypoints = np.array(arr0)
@@ -56,21 +53,28 @@ def run_simulation(x0: int = 0, t_range: int = 200, num_simulations: int = 1):
         ax.plot(xpoints, ypoints, label=f"simulation {counter}")
         counter += 1
 
-    for box in list0:
-        left_bottom: (int, int) = box[0]
-        right_top: (int, int) = box[1]
+    for level in dict_boxes.keys():
+        list0 = dict_boxes[level]
 
-        box_left: int = int(left_bottom[0])
-        box_bottom: int = int(left_bottom[1])
-        box_right: int = int(right_top[0])
-        box_top: int = int(right_top[1])
+        for box0 in list0:
+            box = copy.deepcopy(box0[0])
+            left_bottom: (int, int) = box[0]
+            right_top: (int, int) = box[1]
 
-        height = box_top - box_bottom
-        width = box_right - box_left
+            box_left: int = int(left_bottom[0])
+            box_bottom: int = int(left_bottom[1])
+            box_right: int = int(right_top[0])
+            box_top: int = int(right_top[1])
 
-        ax.add_patch(Rectangle((box_left, box_bottom), width, height))
+            height = box_top - box_bottom
+            width = box_right - box_left
 
-        print(f"({box_left}, {box_bottom}), {width}, {height}")
+            color = colors[level] if box0[1] else "none"
+
+            ax.add_patch(Rectangle((box_left, box_bottom), width, height, facecolor=color,
+                edgecolor='black', lw=0.7))
+
+            print(f"({box_left}, {box_bottom}), {width}, {height}")
         #matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
 
     plt.legend(loc="upper left")
@@ -93,9 +97,6 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
 
         #print(f"{[level]}, ({box_left}, {box_bottom}, {box_right}, {box_top})")
 
-        if box_top - box_bottom < 2 or box_right - box_left < 2:
-            return
-
         col = box_left
 
         inside_box: bool = False
@@ -106,17 +107,22 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
 
             if box_bottom <= val <= box_top:
                 inside_box = True
+            else:
+                print(f"{box_bottom}, {val}, {box_top}")
 
         if not inside_box:
             _ = 0
 
-        if inside_box:
+        if True:
             if level not in dict_boxes:
                 dict_boxes[level] = []
 
-            list0: list[((int, int), (int, int))] = dict_boxes[level]
+            list0: list[(((int, int), (int, int)), bool)] = dict_boxes[level]
 
-            list0.append(box0)
+            list0.append((box0, inside_box))
+
+            if box_top - box_bottom < 1 or box_right - box_left < 1:
+                return
 
             row_start = box_bottom
             col_start = box_left
