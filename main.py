@@ -1,9 +1,14 @@
+import copy
 from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
-def run_simulation(x0: int = 0, t_range: int = 999, num_simulations: int = 8):
+
+def run_simulation(x0: int = 0, t_range: int = 200, num_simulations: int = 1):
     arr: list[list[int]] = [[]] * num_simulations
+
+    dict_boxes = {}
 
     box_row_min = 999999
     box_row_max = -999999
@@ -30,33 +35,28 @@ def run_simulation(x0: int = 0, t_range: int = 999, num_simulations: int = 8):
             xs[t] = x
             print(f"[{k}], step[{t}]: {step}, x = {x}")
 
-        dict_boxes = {}
-
         calculate_box_counting(xs, [((0, box_row_min), (t_range, box_row_max))], dict_boxes=dict_boxes, level=0)
 
         arr[k] = xs
 
     plt.style.use('ggplot')
 
+    fig, ax = plt.subplots()
+
     counter: int = 1
+
+    max_key = max(dict_boxes.keys())
+
+    list0 = dict_boxes[max_key]
 
     for arr0 in arr:
         xpoints = np.arange(0, t_range)
         ypoints = np.array(arr0)
 
-        plt.plot(xpoints, ypoints, label=f"simulation {counter}")
+        ax.plot(xpoints, ypoints, label=f"simulation {counter}")
         counter += 1
 
-    plt.legend(loc="upper left")
-    plt.show()
-
-
-def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, int))], dict_boxes: [int, list[((int, int), (int, int))]], level):
-    list_boxes_new: list[((int, int), (int, int))] = []
-
-    max_int: int = 2 ** 63 - 1
-
-    for box in list_boxes:
+    for box in list0:
         left_bottom: (int, int) = box[0]
         right_top: (int, int) = box[1]
 
@@ -64,6 +64,37 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
         box_bottom: int = int(left_bottom[1])
         box_right: int = int(right_top[0])
         box_top: int = int(right_top[1])
+
+        height = box_top - box_bottom
+        width = box_right - box_left
+
+        ax.add_patch(Rectangle((box_left, box_bottom), width, height))
+
+        print(f"({box_left}, {box_bottom}), {width}, {height}")
+        #matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
+
+    plt.legend(loc="upper left")
+    plt.show()
+
+
+def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, int))], dict_boxes: [int, list[((int, int), (int, int))]], level):
+    max_int: int = 2 ** 63 - 1
+
+    for box in list_boxes:
+        box0 = copy.deepcopy(box)
+
+        left_bottom: (int, int) = box0[0]
+        right_top: (int, int) = box0[1]
+
+        box_left: int = int(left_bottom[0])
+        box_bottom: int = int(left_bottom[1])
+        box_right: int = int(right_top[0])
+        box_top: int = int(right_top[1])
+
+        #print(f"{[level]}, ({box_left}, {box_bottom}, {box_right}, {box_top})")
+
+        if box_top - box_bottom < 2 or box_right - box_left < 2:
+            return
 
         line_row_max: int = -999999# max_int * -1
         line_row_min: int = 999999# max_int
@@ -83,12 +114,9 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
             if level not in dict_boxes:
                 dict_boxes[level] = []
 
-            list0: list[(int, int, int, int)] = dict_boxes[level]
+            list0: list[((int, int), (int, int))] = dict_boxes[level]
 
-            list0.append(box)
-
-            if box_top - box_bottom < 2 or box_right - box_left < 2:
-                return
+            list0.append(box0)
 
             row_start = box_bottom
             col_start = box_left
@@ -99,12 +127,12 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
             row_end = box_top
             col_end = box_right
 
-            list_boxes_new.append(((col_start, row_start), (col_middle, row_middle)))
-            list_boxes_new.append(((col_middle, row_start), (col_end, row_middle)))
-            list_boxes_new.append(((col_start, row_middle), (col_middle, row_end)))
-            list_boxes_new.append(((col_middle, row_middle), (col_end, row_end)))
+            list_boxes_new: list[((int, int), (int, int))] = [((col_start, row_start), (col_middle, row_middle)),
+                                                              ((col_middle, row_start), (col_end, row_middle)),
+                                                              ((col_start, row_middle), (col_middle, row_end)),
+                                                              ((col_middle, row_middle), (col_end, row_end))]
 
-            calculate_box_counting(xs, list_boxes_new, dict_boxes=dict_boxes, level=level + 1)
+            calculate_box_counting(xs, list_boxes=list_boxes_new, dict_boxes=dict_boxes, level=level + 1)
 
 
 
