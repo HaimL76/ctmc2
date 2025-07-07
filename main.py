@@ -99,88 +99,62 @@ def run_simulation(bm0: int = 0, t_max: int = 99, delta_t: float = 0.01, num_sim
     plt.show()
 
 
-def calculate_box_counting(xs: list[float], area: ((float, float), (float, float)), epsilon, delta_t,
+def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)), epsilon, delta_t,
                            dict_boxes: [int, list[((int, int), (int, int))]], level):
-    print(f"level: {level}")
+    print(f"level: {level}, box: {box}, epsilon: {epsilon}")
 
-    coords_min = area[0]
-    coords_max = area[1]
+    coords_min = box[0]
+    coords_max = box[1]
 
     row_min = coords_min[1]
     row_max = coords_max[1]
 
+    col_min = coords_min[0]
+    col_max = coords_max[0]
+
+    epsilon_size_in_cols = epsilon / delta_t
+
     row_index = row_min
 
     while row_index <= row_max:
-        print(row_index)
-        row_index += epsilon
+        row_start = row_index
+        row_end = row_start + epsilon
+        row_index = row_end
 
-    for box in grid:
-        box0 = copy.deepcopy(box)
+        col_index = col_min
 
-        left_bottom: (int, int) = box0[0]
-        right_top: (int, int) = box0[1]
+        is_inside = False
 
-        box_left: int = int(left_bottom[0])
-        box_bottom: int = int(left_bottom[1])
-        box_right: int = int(right_top[0])
-        box_top: int = int(right_top[1])
+        while col_index <= col_max:
+            col_start = col_index
+            col_end = col_start + epsilon_size_in_cols
+            col_index = col_end
 
-        #print(f"{[level]}, ({box_left}, {box_bottom}, {box_right}, {box_top})")
+            box = ((col_start, row_start), (col_end, row_end))
 
-        col = box_left
+            is_inside = False
 
-        inside_box: bool = False
+            col = int(col_index)
 
-        while not inside_box and col < box_right:
-            val = xs[col]
-            col += 1
+            while not is_inside and col <= col_end:
+                val = xs[col]
+                col += 1
 
-            if box_bottom <= val <= box_top:
-                inside_box = True
-            else:
-                _ = 0  #print(f"{box_bottom}, {val}, {box_top}")
+                if row_start <= val <= row_end:
+                    is_inside = True
 
-        if not inside_box:
-            _ = 0
+            if is_inside:
+                if epsilon > 0.1:
+                    epsilon_new = epsilon - 0.1
+                    calculate_box_counting(xs, box, epsilon_new, delta_t,
+                                           dict_boxes=dict_boxes, level=level + 1)
+                else:
+                    if level not in dict_boxes:
+                        dict_boxes[level] = []
 
-        if inside_box:
-            height = box_top - box_bottom
-            width = box_right - box_left
+                    list0 = dict_boxes[level]
 
-            if height > 1 or width > 1:
-                row_start = box_bottom
-                col_start = box_left
-
-                row_middle = (box_bottom + box_top) / 2
-                col_middle = (box_left + box_right) / 2
-
-                row_end = box_top
-                col_end = box_right
-
-                list_boxes_new: list[((int, int), (int, int))] = []
-
-                if height > 1 and width > 1:
-                    list_boxes_new.append(((col_start, row_start), (col_middle, row_middle)))
-                    list_boxes_new.append(((col_middle, row_start), (col_end, row_middle)))
-                    list_boxes_new.append(((col_start, row_middle), (col_middle, row_end)))
-                    list_boxes_new.append(((col_middle, row_middle), (col_end, row_end)))
-                elif height > 1:
-                    list_boxes_new.append(((col_start, row_start), (col_end, row_middle)))
-                    list_boxes_new.append(((col_start, row_middle), (col_end, row_end)))
-                elif width > 1:
-                    list_boxes_new.append(((col_start, row_start), (col_middle, row_end)))
-                    list_boxes_new.append(((col_middle, row_start), (col_end, row_end)))
-
-                calculate_box_counting(xs, area=list_boxes_new, epsilon=epsilon, delta_t=delta_t,
-                                       dict_boxes=dict_boxes, level=level + 1)
-            else:
-                if level not in dict_boxes:
-                    dict_boxes[level] = []
-
-                list0: list[(((int, int), (int, int)), bool)] = dict_boxes[level]
-
-                list0.append((box0, inside_box))
+                    list0.append()
 
 
 def main():
