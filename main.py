@@ -75,21 +75,25 @@ def run_simulation(bm0: int = 0, t_max: int = 99, delta_t: float = 0.01, num_sim
         list0 = dict_boxes[level]
 
         for box0 in list0:
-            box = copy.deepcopy(box0[0])
-            left_bottom: (int, int) = box[0]
-            right_top: (int, int) = box[1]
+            box = copy.deepcopy(box0)
 
-            box_left: int = int(left_bottom[0])
-            box_bottom: int = int(left_bottom[1])
-            box_right: int = int(right_top[0])
-            box_top: int = int(right_top[1])
+            coords_min: (float, float) = box[0]
+            coords_max: (float, float) = box[1]
 
-            height = box_top - box_bottom
-            width = box_right - box_left
+            col_min: float = coords_min[0]
+            col_max: float = coords_max[0]
+            row_min: float = coords_min[1]
+            row_max: float = coords_max[1]
+
+            t_min = col_min * delta_t
+            t_max = col_max * delta_t
+
+            height = row_max - row_min
+            width = t_max - t_min
 
             color = colors[level % len(colors)] if box0[1] else "none"
 
-            ax.add_patch(Rectangle((box_left, box_bottom), width, height, facecolor=color,
+            ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
                                    edgecolor='black', lw=0.7))
 
             #print(f"({box_left}, {box_bottom}), {width}, {height}")
@@ -137,14 +141,16 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
             col = int(col_index)
 
             while not is_inside and col <= col_end:
-                val = xs[col]
+                if col < len(xs):
+                    val = xs[col]
+
+                    if row_start <= val <= row_end:
+                        is_inside = True
+
                 col += 1
 
-                if row_start <= val <= row_end:
-                    is_inside = True
-
             if is_inside:
-                if epsilon > 0.1:
+                if epsilon > 0.2:
                     epsilon_new = epsilon - 0.1
                     calculate_box_counting(xs, box, epsilon_new, delta_t,
                                            dict_boxes=dict_boxes, level=level + 1)
@@ -154,7 +160,7 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
 
                     list0 = dict_boxes[level]
 
-                    list0.append()
+                    list0.append(copy.deepcopy(box))
 
 
 def main():
