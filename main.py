@@ -6,50 +6,52 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import matplotlib as mpl
 
-def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 8):
+max_int: int = 2 ** 63 - 1
+
+
+def run_simulation(bm0: int = 0, t_max: int = 9999, delta_t: float = 0.01, num_simulations: int = 8):
     #cmap = mpl.colormaps['plasma']
 
     # Take colors at regular intervals spanning the colormap.
     #colors = cmap(np.linspace(0, 1, 256))
     limit = sys.getrecursionlimit()
-    sys.setrecursionlimit(15000000)
+    sys.setrecursionlimit(9999)
     limit = sys.getrecursionlimit()
     colors = ["red", "yellow", "orange", "green", "blue", "pink", "purple", "lightgreen", "lightblue"]
 
-    arr: list[list[int]] = [[]] * num_simulations
+    arr: list[list[float]] = [[]] * num_simulations
 
     dict_boxes = {}
 
-    box_row_min = 999999
-    box_row_max = -999999
+    box_row_min = max_int
+    box_row_max = max_int * -1
 
-    mu = 0
-    sigma = 1
+    num_steps: int = int(t_max / delta_t)
 
     for k in range(num_simulations):
-        xs: list[int] = [0] * t_range
-        x: int = x0
+        xs: list[float] = [0] * num_steps
+        bm: float = bm0
 
         now = datetime.now()
         ts = int(now.timestamp())
         np.random.seed(ts)
 
-        for t in range(t_range):
+        for index in range(num_steps):
             arr_step = np.random.choice([1, -1], 1)
 
-            step = np.random.normal(mu, sigma, 1)
+            arr_step = np.random.normal(0, delta_t, 1)
 
             step = arr_step[0]
-            x += step
+            bm += step
 
-            if x < box_row_min:
-                box_row_min = x
+            if bm < box_row_min:
+                box_row_min = bm
 
-            if x > box_row_max:
-                box_row_max = x
+            if bm > box_row_max:
+                box_row_max = bm
 
-            xs[t] = x
-            print(f"[{k}], step[{t}]: {step}, x = {x}")
+            xs[index] = bm
+            print(f"[{k}], index: {index}, bm: {bm}")
 
         #calculate_box_counting(xs, [((0, box_row_min), (t_range, box_row_max))], dict_boxes=dict_boxes, level=0)
 
@@ -61,8 +63,9 @@ def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 8):
 
     counter: int = 1
 
+    xpoints = np.array([index * delta_t for index in range(num_steps)])
+
     for arr0 in arr:
-        xpoints = np.arange(0, t_range)
         ypoints = np.array(arr0)
 
         ax.plot(xpoints, ypoints, label=f"simulation {counter}")
@@ -87,7 +90,7 @@ def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 8):
             color = colors[level % len(colors)] if box0[1] else "none"
 
             ax.add_patch(Rectangle((box_left, box_bottom), width, height, facecolor=color,
-                edgecolor='black', lw=0.7))
+                                   edgecolor='black', lw=0.7))
 
             #print(f"({box_left}, {box_bottom}), {width}, {height}")
         #matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
@@ -96,9 +99,8 @@ def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 8):
     plt.show()
 
 
-def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, int))], dict_boxes: [int, list[((int, int), (int, int))]], level):
-    max_int: int = 2 ** 63 - 1
-
+def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, int))],
+                           dict_boxes: [int, list[((int, int), (int, int))]], level):
     print(f"level: {level}")
 
     for box in list_boxes:
@@ -125,7 +127,7 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
             if box_bottom <= val <= box_top:
                 inside_box = True
             else:
-                _ = 0#print(f"{box_bottom}, {val}, {box_top}")
+                _ = 0  #print(f"{box_bottom}, {val}, {box_top}")
 
         if not inside_box:
             _ = 0
@@ -168,9 +170,8 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
                 list0.append((box0, inside_box))
 
 
-
-
 def main():
     run_simulation()
+
 
 main()
