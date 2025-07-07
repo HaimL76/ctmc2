@@ -9,7 +9,7 @@ import matplotlib as mpl
 max_int: int = 2 ** 63 - 1
 
 
-def run_simulation(bm0: int = 0, t_max: int = 9999, delta_t: float = 0.01, num_simulations: int = 8):
+def run_simulation(bm0: int = 0, t_max: int = 99, delta_t: float = 0.01, num_simulations: int = 1):
     #cmap = mpl.colormaps['plasma']
 
     # Take colors at regular intervals spanning the colormap.
@@ -44,16 +44,16 @@ def run_simulation(bm0: int = 0, t_max: int = 9999, delta_t: float = 0.01, num_s
             step = arr_step[0]
             bm += step
 
-            if bm < box_row_min:
-                box_row_min = bm
-
-            if bm > box_row_max:
-                box_row_max = bm
+            box_row_min = min(box_row_min, bm)
+            box_row_max = max(box_row_max, bm)
 
             xs[index] = bm
             print(f"[{k}], index: {index}, bm: {bm}")
 
-        #calculate_box_counting(xs, [((0, box_row_min), (t_range, box_row_max))], dict_boxes=dict_boxes, level=0)
+        epsilon = 0.9
+
+        calculate_box_counting(xs, ((0, box_row_min), (num_steps, box_row_max)),
+                               epsilon=epsilon, delta_t=delta_t, dict_boxes=dict_boxes, level=0)
 
         arr[k] = xs
 
@@ -99,11 +99,23 @@ def run_simulation(bm0: int = 0, t_max: int = 9999, delta_t: float = 0.01, num_s
     plt.show()
 
 
-def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, int))],
+def calculate_box_counting(xs: list[float], area: ((float, float), (float, float)), epsilon, delta_t,
                            dict_boxes: [int, list[((int, int), (int, int))]], level):
     print(f"level: {level}")
 
-    for box in list_boxes:
+    coords_min = area[0]
+    coords_max = area[1]
+
+    row_min = coords_min[1]
+    row_max = coords_max[1]
+
+    row_index = row_min
+
+    while row_index <= row_max:
+        print(row_index)
+        row_index += epsilon
+
+    for box in grid:
         box0 = copy.deepcopy(box)
 
         left_bottom: (int, int) = box0[0]
@@ -160,7 +172,8 @@ def calculate_box_counting(xs: list[int], list_boxes: list[((int, int), (int, in
                     list_boxes_new.append(((col_start, row_start), (col_middle, row_end)))
                     list_boxes_new.append(((col_middle, row_start), (col_end, row_end)))
 
-                calculate_box_counting(xs, list_boxes=list_boxes_new, dict_boxes=dict_boxes, level=level + 1)
+                calculate_box_counting(xs, area=list_boxes_new, epsilon=epsilon, delta_t=delta_t,
+                                       dict_boxes=dict_boxes, level=level + 1)
             else:
                 if level not in dict_boxes:
                     dict_boxes[level] = []
