@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import matplotlib as mpl
 
-def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 1):
+def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 8):
     #cmap = mpl.colormaps['plasma']
 
     # Take colors at regular intervals spanning the colormap.
@@ -23,6 +23,9 @@ def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 1):
     box_row_min = 999999
     box_row_max = -999999
 
+    mu = 0
+    sigma = 1
+
     for k in range(num_simulations):
         xs: list[int] = [0] * t_range
         x: int = x0
@@ -33,6 +36,9 @@ def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 1):
 
         for t in range(t_range):
             arr_step = np.random.choice([1, -1], 1)
+
+            step = np.random.normal(mu, sigma, 1)
+
             step = arr_step[0]
             x += step
 
@@ -45,7 +51,7 @@ def run_simulation(x0: int = 0, t_range: int = 99999, num_simulations: int = 1):
             xs[t] = x
             print(f"[{k}], step[{t}]: {step}, x = {x}")
 
-        calculate_box_counting(xs, [((0, box_row_min), (t_range, box_row_max))], dict_boxes=dict_boxes, level=0)
+        #calculate_box_counting(xs, [((0, box_row_min), (t_range, box_row_max))], dict_boxes=dict_boxes, level=0)
 
         arr[k] = xs
 
