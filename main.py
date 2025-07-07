@@ -1,4 +1,5 @@
 import copy
+import math
 import sys
 from datetime import datetime
 import numpy as np
@@ -9,7 +10,7 @@ import matplotlib as mpl
 max_int: int = 2 ** 63 - 1
 
 
-def run_simulation(bm0: int = 0, t_max: int = 99, delta_t: float = 0.01, num_simulations: int = 1):
+def run_simulation(bm0: int = 0, t_max: int = 999, delta_t: float = 0.01, num_simulations: int = 1):
     #cmap = mpl.colormaps['plasma']
 
     # Take colors at regular intervals spanning the colormap.
@@ -52,8 +53,8 @@ def run_simulation(bm0: int = 0, t_max: int = 99, delta_t: float = 0.01, num_sim
 
         epsilon = 0.9
 
-        calculate_box_counting(xs, ((0, box_row_min), (num_steps, box_row_max)),
-                               epsilon=epsilon, delta_t=delta_t, dict_boxes=dict_boxes, level=0)
+        count = calculate_box_counting(xs, ((0, box_row_min), (num_steps, box_row_max)),
+                               epsilon=epsilon, delta_t=delta_t, dict_boxes=dict_boxes, level=0, count=0)
 
         arr[k] = xs
 
@@ -71,11 +72,20 @@ def run_simulation(bm0: int = 0, t_max: int = 99, delta_t: float = 0.01, num_sim
         ax.plot(xpoints, ypoints, label=f"simulation {counter}")
         counter += 1
 
+    num_boxes = 0
+    epsilon = None
+
     for level in dict_boxes.keys():
         list0 = dict_boxes[level]
 
-        for box0 in list0:
+        for tup in list0:
+            epsilon = tup[0]
+            box0 = tup[1]
             box = copy.deepcopy(box0)
+
+            num_boxes += 1
+
+            print(f"num boxes: {num_boxes}")
 
             coords_min: (float, float) = box[0]
             coords_max: (float, float) = box[1]
@@ -102,10 +112,17 @@ def run_simulation(bm0: int = 0, t_max: int = 99, delta_t: float = 0.01, num_sim
     plt.legend(loc="upper left")
     plt.show()
 
+    log_num_boxes = math.log(num_boxes)
+    log_1_over_epsilon = math.log(1 / epsilon)
+
+    print(log_num_boxes / log_1_over_epsilon)
+
+    _ = 0
 
 def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)), epsilon, delta_t,
-                           dict_boxes: [int, list[((int, int), (int, int))]], level):
-    print(f"level: {level}, box: {box}, epsilon: {epsilon}")
+                           dict_boxes: [int, list[((int, int), (int, int))]], level, count):
+    #print(f"level: {level}, box: {box}, epsilon: {epsilon}")
+    print(f"count: {count}")
 
     coords_min = box[0]
     coords_max = box[1]
@@ -152,15 +169,19 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
             if is_inside:
                 if epsilon > 0.2:
                     epsilon_new = epsilon - 0.1
-                    calculate_box_counting(xs, box, epsilon_new, delta_t,
-                                           dict_boxes=dict_boxes, level=level + 1)
+                    count = calculate_box_counting(xs, box, epsilon_new, delta_t,
+                                           dict_boxes=dict_boxes, level=level + 1, count=count)
                 else:
                     if level not in dict_boxes:
                         dict_boxes[level] = []
 
                     list0 = dict_boxes[level]
 
-                    list0.append(copy.deepcopy(box))
+                    list0.append((epsilon, copy.deepcopy(box)))
+
+                    count += 1
+
+    return count
 
 
 def main():
