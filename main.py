@@ -10,7 +10,7 @@ import matplotlib as mpl
 max_int: int = 2 ** 63 - 1
 
 
-def run_simulation(bm0: int = 0, t_max: int = 999, delta_t: float = 0.01, num_simulations: int = 1):
+def run_simulation(bm0: int = 0, t_max: int = 99, delta_t: float = 0.0001, num_simulations: int = 1):
     #cmap = mpl.colormaps['plasma']
 
     # Take colors at regular intervals spanning the colormap.
@@ -75,6 +75,8 @@ def run_simulation(bm0: int = 0, t_max: int = 999, delta_t: float = 0.01, num_si
     num_boxes = 0
     epsilon = None
 
+    draw = False
+
     for level in dict_boxes.keys():
         list0 = dict_boxes[level]
 
@@ -87,23 +89,24 @@ def run_simulation(bm0: int = 0, t_max: int = 999, delta_t: float = 0.01, num_si
 
             print(f"num boxes: {num_boxes}")
 
-            coords_min: (float, float) = box[0]
-            coords_max: (float, float) = box[1]
+            if draw:
+                coords_min: (float, float) = box[0]
+                coords_max: (float, float) = box[1]
 
-            col_min: float = coords_min[0]
-            col_max: float = coords_max[0]
-            row_min: float = coords_min[1]
-            row_max: float = coords_max[1]
+                col_min: float = coords_min[0]
+                col_max: float = coords_max[0]
+                row_min: float = coords_min[1]
+                row_max: float = coords_max[1]
 
-            t_min = col_min * delta_t
-            t_max = col_max * delta_t
+                t_min = col_min * delta_t
+                t_max = col_max * delta_t
 
-            height = row_max - row_min
-            width = t_max - t_min
+                height = row_max - row_min
+                width = t_max - t_min
 
-            color = colors[level % len(colors)] if box0[1] else "none"
+                color = colors[level % len(colors)] if box0[1] else "none"
 
-            ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
+                ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
                                    edgecolor='black', lw=0.7))
 
             #print(f"({box_left}, {box_bottom}), {width}, {height}")
@@ -167,8 +170,8 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
                 col += 1
 
             if is_inside:
-                if epsilon > 0.2:
-                    epsilon_new = epsilon - 0.1
+                if epsilon > delta_t:
+                    epsilon_new = epsilon / 2
                     count = calculate_box_counting(xs, box, epsilon_new, delta_t,
                                            dict_boxes=dict_boxes, level=level + 1, count=count)
                 else:
