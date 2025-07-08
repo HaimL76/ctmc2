@@ -10,7 +10,7 @@ import matplotlib as mpl
 max_int: int = 2 ** 63 - 1
 
 
-def run_simulation(bm0: int = 0, t_max: int = 1, delta_t: float = 0.0001, num_simulations: int = 1):
+def run_simulation(bm0: int = 0, t_max: int = 1, delta_t: float = 0.00005, num_simulations: int = 1):
     #cmap = mpl.colormaps['plasma']
 
     # Take colors at regular intervals spanning the colormap.
@@ -86,7 +86,9 @@ def run_simulation(bm0: int = 0, t_max: int = 1, delta_t: float = 0.0001, num_si
         log_num_boxes = math.log(num_boxes)
         log_1_over_epsilon = math.log(1 / epsilon)
 
-        print(log_num_boxes / log_1_over_epsilon)
+        dimension = log_num_boxes / log_1_over_epsilon
+
+        print(f"{epsilon},{num_boxes},{dimension}")
 
         list0 = tup[0]
 
@@ -124,14 +126,15 @@ def run_simulation(bm0: int = 0, t_max: int = 1, delta_t: float = 0.0001, num_si
         #matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
 
     plt.legend(loc="upper left")
-    plt.show()
+    #plt.show()
 
     _ = 0
 
 def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)), epsilon, delta_t,
                            dict_boxes: [int, list[((int, int), (int, int))]], level, count):
     #print(f"level: {level}, box: {box}, epsilon: {epsilon}")
-    print(f"count: {count}")
+    if (count % 1000) == 0:
+        print(f"count: {count}, level: {level}, epsilon: {epsilon}")
 
     coords_min = box[0]
     coords_max = box[1]
@@ -186,7 +189,7 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
                 dict_boxes[level] = (tup[0], tup[1] + 1, epsilon)
 
                 if epsilon > delta_t:
-                    epsilon_new = epsilon / 2
+                    epsilon_new = epsilon * 0.5#.75
                     count = calculate_box_counting(xs, box, epsilon_new, delta_t,
                                            dict_boxes=dict_boxes, level=level + 1, count=count)
                 else:
