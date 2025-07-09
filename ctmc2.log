@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.12) (preloaded format=pdflatex 2024.1.14)  6 JUL 2025 00:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.12) (preloaded format=pdflatex 2024.1.14)  10 JUL 2025 00:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -62,8 +62,7 @@ tex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count195
 \l__pdf_internal_box=\box51
-)
-No file ctmc2.aux.
+) (ctmc2.aux)
 \openout1 = `ctmc2.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 9.
@@ -117,33 +116,22 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 11.
 (C:\Users\isila\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<bm_simulations.png, id=1, 1110.0672pt x 544.9158pt>
-File: bm_simulations.png Graphic file (type png)
-<use bm_simulations.png>
-Package pdftex.def Info: bm_simulations.png  used on input line 18.
-(pdftex.def)             Requested size: 517.5pt x 254.03177pt.
-
-Overfull \hbox (172.5pt too wide) in paragraph at lines 17--19
-[] 
- []
-
 [1
 
-{C:/Users/isila/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map} <./bm_simulat
-ions.png>] (ctmc2.aux)
+{C:/Users/isila/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] (ctmc2.aux)
  ***********
 LaTeX2e <2023-11-01>
 L3 programming layer <2024-01-04>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 1419 strings out of 474486
- 23523 string characters out of 5743755
- 1928528 words of memory out of 5000000
- 23728 multiletter control sequences out of 15000+600000
+ 1415 strings out of 474486
+ 23410 string characters out of 5743755
+ 1941528 words of memory out of 5000000
+ 23722 multiletter control sequences out of 15000+600000
  564712 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,6n,65p,253b,220s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,6n,65p,370b,220s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmmi10.pfb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmmi5.pfb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/pu
@@ -155,11 +143,12 @@ l/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/isila/AppDa
 ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/isil
 a/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/U
 sers/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.p
-fb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/sy
-mbols/msbm10.pfb>
-Output written on ctmc2.pdf (1 page, 241807 bytes).
+fb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
+/cmsy7.pfb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/symbols/msbm10.pfb>
+Output written on ctmc2.pdf (1 page, 123020 bytes).
 PDF statistics:
- 64 PDF objects out of 1000 (max. 8388607)
+ 66 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
