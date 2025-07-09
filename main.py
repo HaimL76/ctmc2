@@ -10,7 +10,7 @@ import matplotlib as mpl
 max_int: int = 2 ** 63 - 1
 
 
-def run_simulation(bm0: int = 0, t_max: int = 999, delta_t: float = 0.01, num_simulations: int = 1):
+def run_simulation(bm0: int = 0, t_max: int = 1, delta_t: float = 0.00005, num_simulations: int = 1):
     #cmap = mpl.colormaps['plasma']
 
     # Take colors at regular intervals spanning the colormap.
@@ -75,54 +75,66 @@ def run_simulation(bm0: int = 0, t_max: int = 999, delta_t: float = 0.01, num_si
     num_boxes = 0
     epsilon = None
 
+    draw = False
+
     for level in dict_boxes.keys():
-        list0 = dict_boxes[level]
+        tup = dict_boxes[level]
 
-        for tup in list0:
-            epsilon = tup[0]
-            box0 = tup[1]
-            box = copy.deepcopy(box0)
+        num_boxes = tup[1]
+        epsilon = tup[2]
 
-            num_boxes += 1
+        log_num_boxes = math.log(num_boxes)
+        log_1_over_epsilon = math.log(1 / epsilon)
 
-            print(f"num boxes: {num_boxes}")
+        dimension = log_num_boxes / log_1_over_epsilon
 
-            coords_min: (float, float) = box[0]
-            coords_max: (float, float) = box[1]
+        print(f"{epsilon},{num_boxes},{dimension}")
 
-            col_min: float = coords_min[0]
-            col_max: float = coords_max[0]
-            row_min: float = coords_min[1]
-            row_max: float = coords_max[1]
+        list0 = tup[0]
 
-            t_min = col_min * delta_t
-            t_max = col_max * delta_t
+        if list0 is not None and len(list0) > 0:
+            for tup in list0:
+                epsilon = tup[0]
+                box0 = tup[1]
+                box = copy.deepcopy(box0)
 
-            height = row_max - row_min
-            width = t_max - t_min
+                num_boxes += 1
 
-            color = colors[level % len(colors)] if box0[1] else "none"
+                print(f"num boxes: {num_boxes}")
 
-            ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
+                if draw:
+                    coords_min: (float, float) = box[0]
+                    coords_max: (float, float) = box[1]
+
+                    col_min: float = coords_min[0]
+                    col_max: float = coords_max[0]
+                    row_min: float = coords_min[1]
+                    row_max: float = coords_max[1]
+
+                    t_min = col_min * delta_t
+                    t_max = col_max * delta_t
+
+                    height = row_max - row_min
+                    width = t_max - t_min
+
+                    color = colors[level % len(colors)] if box0[1] else "none"
+
+                    ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
                                    edgecolor='black', lw=0.7))
 
             #print(f"({box_left}, {box_bottom}), {width}, {height}")
         #matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
 
     plt.legend(loc="upper left")
-    plt.show()
-
-    log_num_boxes = math.log(num_boxes)
-    log_1_over_epsilon = math.log(1 / epsilon)
-
-    print(log_num_boxes / log_1_over_epsilon)
+    #plt.show()
 
     _ = 0
 
 def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)), epsilon, delta_t,
                            dict_boxes: [int, list[((int, int), (int, int))]], level, count):
     #print(f"level: {level}, box: {box}, epsilon: {epsilon}")
-    print(f"count: {count}")
+    if (count % 1000) == 0:
+        print(f"count: {count}, level: {level}, epsilon: {epsilon}")
 
     coords_min = box[0]
     coords_max = box[1]
@@ -136,6 +148,8 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
     epsilon_size_in_cols = epsilon / delta_t
 
     row_index = row_min
+
+    draw = False
 
     while row_index <= row_max:
         row_start = row_index
@@ -167,19 +181,31 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
                 col += 1
 
             if is_inside:
-                if epsilon > 0.2:
-                    epsilon_new = epsilon - 0.1
+                if level not in dict_boxes:
+                    dict_boxes[level] = ([], 0, epsilon)
+
+                tup = dict_boxes[level]
+
+                dict_boxes[level] = (tup[0], tup[1] + 1, epsilon)
+
+                if epsilon > delta_t:
+                    epsilon_new = epsilon * 0.5#.75
                     count = calculate_box_counting(xs, box, epsilon_new, delta_t,
                                            dict_boxes=dict_boxes, level=level + 1, count=count)
                 else:
-                    if level not in dict_boxes:
-                        dict_boxes[level] = []
-
-                    list0 = dict_boxes[level]
-
-                    list0.append((epsilon, copy.deepcopy(box)))
-
                     count += 1
+
+                    if draw:
+                        tup = dict_boxes[level]
+
+                        list0 = tup[0]
+
+                        if list0 is None:
+                            list0 = []
+
+                            dict_boxes[level] = (list0, tup[1], epsilon)
+
+                        list0.append((epsilon, copy.deepcopy(box)))
 
     return count
 
