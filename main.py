@@ -10,14 +10,8 @@ import matplotlib as mpl
 max_int: int = 2 ** 63 - 1
 
 
-def run_simulation(bm0: int = 0, t_max: int = 1, delta_t: float = 0.00005, num_simulations: int = 1):
-    #cmap = mpl.colormaps['plasma']
-
-    # Take colors at regular intervals spanning the colormap.
-    #colors = cmap(np.linspace(0, 1, 256))
-    limit = sys.getrecursionlimit()
-    sys.setrecursionlimit(9999)
-    limit = sys.getrecursionlimit()
+def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
+                   downscale_factor: float = 0.5, delta_t: float = 0.00005, num_simulations: int = 1):
     colors = ["red", "yellow", "orange", "green", "blue", "pink", "purple", "lightgreen", "lightblue"]
 
     arr: list[list[float]] = [[]] * num_simulations
@@ -51,10 +45,11 @@ def run_simulation(bm0: int = 0, t_max: int = 1, delta_t: float = 0.00005, num_s
             xs[index] = bm
             print(f"[{k}], index: {index}, bm: {bm}")
 
-        epsilon = 0.9
+        epsilon = initial_epsilon
 
         count = calculate_box_counting(xs, ((0, box_row_min), (num_steps, box_row_max)),
-                               epsilon=epsilon, delta_t=delta_t, dict_boxes=dict_boxes, level=0, count=0)
+                                       epsilon=epsilon, downscale_factor=downscale_factor,
+                                       delta_t=delta_t, dict_boxes=dict_boxes, level=0, count=0)
 
         arr[k] = xs
 
@@ -120,19 +115,19 @@ def run_simulation(bm0: int = 0, t_max: int = 1, delta_t: float = 0.00005, num_s
                     color = colors[level % len(colors)] if box0[1] else "none"
 
                     ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
-                                   edgecolor='black', lw=0.7))
+                                           edgecolor='black', lw=0.7))
 
-            #print(f"({box_left}, {box_bottom}), {width}, {height}")
-        #matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
+            # print(f"({box_left}, {box_bottom}), {width}, {height}")
+        # matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
 
     plt.legend(loc="upper left")
-    #plt.show()
+    # plt.show()
 
     _ = 0
 
-def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)), epsilon, delta_t,
-                           dict_boxes: [int, list[((int, int), (int, int))]], level, count):
-    #print(f"level: {level}, box: {box}, epsilon: {epsilon}")
+
+def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)), epsilon, downscale_factor,
+                           delta_t, dict_boxes: [int, list[((int, int), (int, int))]], level, count):
     if (count % 1000) == 0:
         print(f"count: {count}, level: {level}, epsilon: {epsilon}")
 
@@ -189,9 +184,10 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
                 dict_boxes[level] = (tup[0], tup[1] + 1, epsilon)
 
                 if epsilon > delta_t:
-                    epsilon_new = epsilon * 0.5#.75
-                    count = calculate_box_counting(xs, box, epsilon_new, delta_t,
-                                           dict_boxes=dict_boxes, level=level + 1, count=count)
+                    epsilon_new = epsilon * downscale_factor
+                    count = calculate_box_counting(xs, box, epsilon_new, downscale_factor=downscale_factor,
+                                                   delta_t=delta_t, dict_boxes=dict_boxes, level=level + 1,
+                                                   count=count)
                 else:
                     count += 1
 
