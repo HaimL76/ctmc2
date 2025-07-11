@@ -14,9 +14,7 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
                    downscale_factor: float = 0.5, delta_t: float = 0.00005, num_simulations: int = 1):
     colors = ["red", "yellow", "orange", "green", "blue", "pink", "purple", "lightgreen", "lightblue"]
 
-    arr: list[list[float]] = [[]] * num_simulations
-
-    dict_boxes = {}
+    arr: list[list[float], dict] = [[]] * num_simulations
 
     box_row_min = max_int
     box_row_max = max_int * -1
@@ -24,7 +22,7 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
     num_steps: int = int(t_max / delta_t)
 
     for k in range(num_simulations):
-        xs: list[float] = [0] * num_steps
+        bms: list[float] = [0] * num_steps
         bm: float = bm0
 
         now = datetime.now()
@@ -32,8 +30,6 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
         np.random.seed(ts)
 
         for index in range(num_steps):
-            arr_step = np.random.choice([1, -1], 1)
-
             arr_step = np.random.normal(0, delta_t, 1)
 
             step = arr_step[0]
@@ -42,16 +38,18 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
             box_row_min = min(box_row_min, bm)
             box_row_max = max(box_row_max, bm)
 
-            xs[index] = bm
+            bms[index] = bm
             print(f"[{k}], index: {index}, bm: {bm}")
 
         epsilon = initial_epsilon
 
-        count = calculate_box_counting(xs, ((0, box_row_min), (num_steps, box_row_max)),
+        dict_boxes: dict = {}
+
+        count = calculate_box_counting(bms, ((0, box_row_min), (num_steps, box_row_max)),
                                        epsilon=epsilon, downscale_factor=downscale_factor,
                                        delta_t=delta_t, dict_boxes=dict_boxes, level=0, count=0)
 
-        arr[k] = xs
+        arr[k] = (bms, dict_boxes)
 
     plt.style.use('ggplot')
 
@@ -61,67 +59,61 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
 
     xpoints = np.array([index * delta_t for index in range(num_steps)])
 
-    for arr0 in arr:
-        ypoints = np.array(arr0)
+    for tup_bms in arr:
+        bms = tup_bms[0]
+
+        ypoints = np.array(bms)
 
         ax.plot(xpoints, ypoints, label=f"simulation {counter}")
-        counter += 1
 
-    num_boxes = 0
-    epsilon = None
+        draw_box_counting = False
 
-    draw = False
+        for level in dict_boxes.keys():
+            tup = dict_boxes[level]
 
-    for level in dict_boxes.keys():
-        tup = dict_boxes[level]
+            num_boxes = tup[1]
+            epsilon = tup[2]
 
-        num_boxes = tup[1]
-        epsilon = tup[2]
+            log_num_boxes = math.log(num_boxes)
+            log_1_over_epsilon = math.log(1 / epsilon)
 
-        log_num_boxes = math.log(num_boxes)
-        log_1_over_epsilon = math.log(1 / epsilon)
+            dimension = log_num_boxes / log_1_over_epsilon
 
-        dimension = log_num_boxes / log_1_over_epsilon
+            print(f"{epsilon},{num_boxes},{dimension}")
 
-        print(f"{epsilon},{num_boxes},{dimension}")
+            list0 = tup[0]
 
-        list0 = tup[0]
+            if list0 is not None and len(list0) > 0:
+                for tup in list0:
+                    box0 = tup[1]
+                    box = copy.deepcopy(box0)
 
-        if list0 is not None and len(list0) > 0:
-            for tup in list0:
-                epsilon = tup[0]
-                box0 = tup[1]
-                box = copy.deepcopy(box0)
+                    num_boxes += 1
 
-                num_boxes += 1
+                    print(f"num boxes: {num_boxes}")
 
-                print(f"num boxes: {num_boxes}")
+                    if draw_box_counting:
+                        coords_min: (float, float) = box[0]
+                        coords_max: (float, float) = box[1]
 
-                if draw:
-                    coords_min: (float, float) = box[0]
-                    coords_max: (float, float) = box[1]
+                        col_min: float = coords_min[0]
+                        col_max: float = coords_max[0]
+                        row_min: float = coords_min[1]
+                        row_max: float = coords_max[1]
 
-                    col_min: float = coords_min[0]
-                    col_max: float = coords_max[0]
-                    row_min: float = coords_min[1]
-                    row_max: float = coords_max[1]
+                        t_min = col_min * delta_t
+                        t_max = col_max * delta_t
 
-                    t_min = col_min * delta_t
-                    t_max = col_max * delta_t
+                        height = row_max - row_min
+                        width = t_max - t_min
 
-                    height = row_max - row_min
-                    width = t_max - t_min
+                        color = colors[level % len(colors)] if box0[1] else "none"
 
-                    color = colors[level % len(colors)] if box0[1] else "none"
-
-                    ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
+                        ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
                                            edgecolor='black', lw=0.7))
 
-            # print(f"({box_left}, {box_bottom}), {width}, {height}")
-        # matplotlib.patches.Rectangle(xy, width, height, *, angle=0.0, rotation_point='xy', **kwargs)[source]
-
     plt.legend(loc="upper left")
-    # plt.show()
+    plt.show()
 
     _ = 0
 
@@ -152,8 +144,6 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
         row_index = row_end
 
         col_index = col_min
-
-        is_inside = False
 
         while col_index <= col_max:
             col_start = col_index
