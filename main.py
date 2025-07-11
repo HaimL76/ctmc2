@@ -47,7 +47,8 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
 
         count = calculate_box_counting(bms, ((0, box_row_min), (num_steps, box_row_max)),
                                        epsilon=epsilon, downscale_factor=downscale_factor,
-                                       delta_t=delta_t, dict_boxes=dict_boxes, level=0, count=0)
+                                       delta_t=delta_t, dict_boxes=dict_boxes, level=0, count=0,
+                                       simulation_index=k)
 
         arr[k] = (bms, dict_boxes)
 
@@ -61,56 +62,69 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
 
     for tup_bms in arr:
         bms = tup_bms[0]
+        dict_boxes = tup_bms[1]
 
         ypoints = np.array(bms)
 
-        ax.plot(xpoints, ypoints, label=f"simulation {counter}")
+        #ax.plot(xpoints, ypoints, label=f"simulation {counter}")
 
         draw_box_counting = False
 
-        for level in dict_boxes.keys():
-            tup = dict_boxes[level]
+        if isinstance(dict_boxes, dict):
+            xarr: list[float] = []
+            yarr: list[float] = []
 
-            num_boxes = tup[1]
-            epsilon = tup[2]
+            for level in dict_boxes.keys():
+                tup = dict_boxes[level]
 
-            log_num_boxes = math.log(num_boxes)
-            log_1_over_epsilon = math.log(1 / epsilon)
+                num_boxes = tup[1]
+                epsilon = tup[2]
 
-            dimension = log_num_boxes / log_1_over_epsilon
+                log_num_boxes = math.log(num_boxes)
+                log_1_over_epsilon = math.log(1 / epsilon)
 
-            print(f"{epsilon},{num_boxes},{dimension}")
+                dimension = log_num_boxes / log_1_over_epsilon
 
-            list0 = tup[0]
+                print(f"{epsilon},{num_boxes},{dimension}")
 
-            if list0 is not None and len(list0) > 0:
-                for tup in list0:
-                    box0 = tup[1]
-                    box = copy.deepcopy(box0)
+                xarr.append(log_1_over_epsilon)
+                yarr.append(dimension)
 
-                    num_boxes += 1
+                list0 = tup[0]
 
-                    print(f"num boxes: {num_boxes}")
+                if list0 is not None and len(list0) > 0:
+                    for tup in list0:
+                        box0 = tup[1]
+                        box = copy.deepcopy(box0)
 
-                    if draw_box_counting:
-                        coords_min: (float, float) = box[0]
-                        coords_max: (float, float) = box[1]
+                        num_boxes += 1
 
-                        col_min: float = coords_min[0]
-                        col_max: float = coords_max[0]
-                        row_min: float = coords_min[1]
-                        row_max: float = coords_max[1]
+                        #print(f"num boxes: {num_boxes}")
 
-                        t_min = col_min * delta_t
-                        t_max = col_max * delta_t
+                        if draw_box_counting:
+                            coords_min: (float, float) = box[0]
+                            coords_max: (float, float) = box[1]
 
-                        height = row_max - row_min
-                        width = t_max - t_min
+                            col_min: float = coords_min[0]
+                            col_max: float = coords_max[0]
+                            row_min: float = coords_min[1]
+                            row_max: float = coords_max[1]
 
-                        color = colors[level % len(colors)] if box0[1] else "none"
+                            t_min = col_min * delta_t
+                            t_max = col_max * delta_t
 
-                        ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
+                            height = row_max - row_min
+                            width = t_max - t_min
+
+                            color = colors[level % len(colors)] if box0[1] else "none"
+
+                            ax.add_patch(Rectangle((t_min, row_min), width, height, facecolor=color,
                                            edgecolor='black', lw=0.7))
+
+            xpoints_boxes = np.array(xarr)
+            ypoints_boxes = np.array(yarr)
+
+            ax.plot(xpoints_boxes, ypoints_boxes, label=f"box counting {counter}")
 
     plt.legend(loc="upper left")
     plt.show()
@@ -119,9 +133,10 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
 
 
 def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)), epsilon, downscale_factor,
-                           delta_t, dict_boxes: [int, list[((int, int), (int, int))]], level, count):
+                           delta_t, dict_boxes: [int, list[((int, int), (int, int))]], level, count,
+                           simulation_index):
     if (count % 1000) == 0:
-        print(f"count: {count}, level: {level}, epsilon: {epsilon}")
+        print(f"[{simulation_index}] count: {count}, level: {level}, epsilon: {epsilon}")
 
     coords_min = box[0]
     coords_max = box[1]
@@ -177,7 +192,7 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
                     epsilon_new = epsilon * downscale_factor
                     count = calculate_box_counting(xs, box, epsilon_new, downscale_factor=downscale_factor,
                                                    delta_t=delta_t, dict_boxes=dict_boxes, level=level + 1,
-                                                   count=count)
+                                                   count=count, simulation_index=simulation_index)
                 else:
                     count += 1
 
@@ -197,7 +212,7 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
 
 
 def main():
-    run_simulation()
+    run_simulation(num_simulations=8)
 
 
 main()
