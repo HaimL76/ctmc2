@@ -62,12 +62,28 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
 
     for tup_bms in arr:
         bms = tup_bms[0]
-        dict_boxes = tup_bms[1]
 
-        ypoints = np.array(bms)
+        if isinstance(bms, list):
+            ypoints = np.array(bms)
 
-        #ax.plot(xpoints, ypoints, label=f"simulation {counter}")
+            if len(ypoints) == len(xpoints):
+                ax.plot(xpoints, ypoints, label=f"simulation {counter}")
+        counter += 1
 
+    plt.legend(loc="upper left")
+    plt.title("Box Counting Dimension")
+    plt.xlabel("One Over Epsilon")
+    plt.ylabel("Box Counting Dimension")
+    plt.savefig('brownian_motion_simulation.png', bbox_inches='tight')
+    plt.close(fig=fig)
+
+    plt.style.use('ggplot')
+
+    fig, ax = plt.subplots()
+
+    counter: int = 1
+
+    for tup_bms in arr:
         draw_box_counting = False
 
         if isinstance(dict_boxes, dict):
@@ -126,10 +142,13 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
 
             ax.plot(xpoints_boxes, ypoints_boxes, label=f"box counting {counter}")
 
-    plt.legend(loc="upper left")
-    plt.show()
+        counter += 1
 
-    _ = 0
+    plt.legend(loc="upper left")
+    plt.title("Box Counting Dimension")
+    plt.xlabel("One Over Epsilon")
+    plt.ylabel("Box Counting Dimension")
+    plt.savefig('box_counting_dimensions.png', bbox_inches='tight')
 
 
 def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)), epsilon, downscale_factor,
