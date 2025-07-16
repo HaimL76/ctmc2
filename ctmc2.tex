@@ -1,5 +1,16 @@
 \documentclass{article}
 \usepackage{amsfonts}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+\urlstyle{same}
 \usepackage{graphicx} % Required for inserting images
 
 \title{Exercise 2}
@@ -10,6 +21,8 @@
 
 \maketitle
 
+\begin{enumerate}
+    \item 
 In time $t=0$, we have $X_0=B_1-(a+b0)B_{\frac{1}{1-0}}=B_1-aB_1=(1-a)B_1.$
 But for $X_t$ to be a Brownian Motion, there must exist some constant $y\in\mathbb{R}$ (specifically $y=0$), such that a.s. $X_0=y$, but $(1-a)B_1$ is a random variable, not a constant. Unless $a=1$, and then a.s. ${X_0=B_1-1B_1=0}.$
 
@@ -34,4 +47,18 @@ So $X_t=B_1-(1-t)B_{\frac{1}{1-t}}$. We already saw that for $a=1$, a.s. $X_0=0$
 
 $var(X_{t+s}-X_t)=\mathbb{E}[(X_{t+s}-X_t)^2]-\mathbb{E}[X_{t+s}-X_t]^2=\mathbb{E}[(X_{t+s}-X_t)]^2]=\mathbb{E}[[(1-t)B_{\frac{1}{1-t}}-(1-(t+s))B_{\frac{1}{1-t-s}}]^2]=(1-t)^2\frac{1}{1-t}-2(1-t)(1-t-s)\frac{1}{1-t}+(1-t-s)^2\frac{1}{1-t-s}=1-t-2(1-t-s)+1-t-s=1-t-2+2t+2s+1-t-s=s$, so $X_{t+s}-X_t\sim{\mathcal{N}(0,s)}$.
 
+\item Code can be found here: \url{https://github.com/HaimL76/ctmc2.git}
+
+\begin{figure}[h]
+\caption{Brownian Motion 8 different simulations}
+\centering
+\includegraphics[width=0.5\textwidth]{brownian_motion_simulation.png}
+\end{figure}
+\begin{figure}[h]
+\caption{Box Counting of the above simulations}
+\centering
+\includegraphics[width=0.5\textwidth]{box_counting_dimensions.png}
+\end{figure}
+We see that even though the 8 simulations go in different paths, the tendency of their box counting dimension around $1.4$ is very similar.
+\end{enumerate}
 \end{document}
