@@ -21,13 +21,18 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
 
     num_steps: int = int(t_max / delta_t)
 
+    current_timestamp = 0
+
     for k in range(num_simulations):
         bms: list[float] = [0] * num_steps
         bm: float = bm0
 
         now = datetime.now()
         ts = int(now.timestamp())
-        np.random.seed(ts)
+
+        if ts != current_timestamp:
+            np.random.seed(ts)
+            current_timestamp = ts
 
         for index in range(num_steps):
             arr_step = np.random.normal(0, delta_t, 1)
@@ -231,7 +236,7 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
 
 
 def main():
-    run_simulation(num_simulations=8)
+    run_simulation(num_simulations=22)
 
 
 main()
