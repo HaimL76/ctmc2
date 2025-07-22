@@ -75,8 +75,10 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
                 ax.plot(xpoints, ypoints, label=f"simulation {counter}")
         counter += 1
 
-    plt.legend(loc="upper left")
-    plt.title("Box Counting Dimension")
+    if num_simulations < 10:
+        plt.legend(loc="upper left")
+        
+    plt.title("Brownian Motion Simulation")
     plt.xlabel("One Over Epsilon")
     plt.ylabel("Box Counting Dimension")
     plt.savefig('brownian_motion_simulation.png', bbox_inches='tight')
@@ -149,7 +151,9 @@ def run_simulation(bm0: int = 0, t_max: int = 1, initial_epsilon: float = 0.9,
 
         counter += 1
 
-    plt.legend(loc="upper left")
+    if num_simulations < 10:
+        plt.legend(loc="upper left")
+        
     plt.title("Box Counting Dimension")
     plt.xlabel("One Over Epsilon")
     plt.ylabel("Box Counting Dimension")
@@ -236,7 +240,7 @@ def calculate_box_counting(xs: list[float], box: ((float, float), (float, float)
 
 
 def main():
-    run_simulation(num_simulations=22)
+    run_simulation(num_simulations=35)
 
 
 main()
