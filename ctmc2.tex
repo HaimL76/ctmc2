@@ -50,7 +50,7 @@ $var(X_{t+s}-X_t)=\mathbb{E}[(X_{t+s}-X_t)^2]-\mathbb{E}[X_{t+s}-X_t]^2=\mathbb{
 \item Code can be found here: \url{https://github.com/HaimL76/ctmc2.git}
 
 \begin{figure}[h]
-\caption{Brownian Motion 35 different simulations}
+\caption{Brownian Motion 50 different simulations}
 \centering
 \includegraphics[width=0.5\textwidth]{brownian_motion_simulation.png}
 \end{figure}
@@ -59,7 +59,7 @@ $var(X_{t+s}-X_t)=\mathbb{E}[(X_{t+s}-X_t)^2]-\mathbb{E}[X_{t+s}-X_t]^2=\mathbb{
 \centering
 \includegraphics[width=0.5\textwidth]{box_counting_dimensions.png}
 \end{figure}
-We see that even though the 35 simulations go in different paths, the tendency of their box counting dimension around $1.4$ is very similar.
+We see that even though the 50 simulations go in different paths, the tendency of their box counting dimension around $1.4$ is very similar.
 
 \item Code can be found here: \url{https://github.com/HaimL76/fbm.git}
 We see that for the three different values of the Hurst parameter, the MSD stabilizes around the same value almost from the beginning of the time interval. Looking at the different plots, we see that the higher the Hurst parameter is, we get more moderate fluctuations around each path. The plot for $H=0.25$ has the shape of half an ellipse, with a significantly broad range of values near the beginning of the time interval, and different paths are strongly blended into other paths. For $H=0.75$, the plot has a triangular shape, and each path is fluctuating closely enough to what can be described as a straight line. For $H=0.5$, where the process is identified with a standard Brownian Motion, we get a plot that is quite in the middle between the above two plots, and should resemble more the plot of the standard Brownian Motion in 2.

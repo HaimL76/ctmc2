@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.12) (preloaded format=pdflatex 2024.1.14)  22 JUL 2025 21:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.12) (preloaded format=pdflatex 2024.1.14)  31 JUL 2025 23:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -329,56 +329,49 @@ File: fractal_brownian_motion_simulation_0.25.png Graphic file (type png)
 Package pdftex.def Info: fractal_brownian_motion_simulation_0.25.png  used on i
 nput line 69.
 (pdftex.def)             Requested size: 172.5pt x 128.60689pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <fbm_msd_0.25.png, id=27, 427.1157pt x 343.2825pt>
 File: fbm_msd_0.25.png Graphic file (type png)
 <use fbm_msd_0.25.png>
 Package pdftex.def Info: fbm_msd_0.25.png  used on input line 74.
 (pdftex.def)             Requested size: 172.5pt x 138.64102pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <fractal_brownian_motion_simulation_0.5.png, id=28, 440.1243pt x 332.442pt>
 File: fractal_brownian_motion_simulation_0.5.png Graphic file (type png)
 <use fractal_brownian_motion_simulation_0.5.png>
 Package pdftex.def Info: fractal_brownian_motion_simulation_0.5.png  used on in
 put line 79.
 (pdftex.def)             Requested size: 172.5pt x 130.29608pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <fbm_msd_0.5.png, id=29, 422.0568pt x 343.2825pt>
 File: fbm_msd_0.5.png Graphic file (type png)
 <use fbm_msd_0.5.png>
 Package pdftex.def Info: fbm_msd_0.5.png  used on input line 84.
 (pdftex.def)             Requested size: 172.5pt x 140.30673pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <fractal_brownian_motion_simulation_0.75.png, id=30, 433.62pt x 332.442pt>
 File: fractal_brownian_motion_simulation_0.75.png Graphic file (type png)
 <use fractal_brownian_motion_simulation_0.75.png>
 Package pdftex.def Info: fractal_brownian_motion_simulation_0.75.png  used on i
 nput line 89.
 (pdftex.def)             Requested size: 172.5pt x 132.24904pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <fbm_msd_0.75.png, id=31, 427.1157pt x 343.2825pt>
 File: fbm_msd_0.75.png Graphic file (type png)
 <use fbm_msd_0.75.png>
 Package pdftex.def Info: fbm_msd_0.75.png  used on input line 94.
 (pdftex.def)             Requested size: 172.5pt x 138.64102pt.
+ [2 <./brownian_motion_simulation.png> <./box_counting_dimensions.png>]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[2 <./brownian_motion_simulation.png> <./box_counting_dimensions.png>] [3 <./fr
-actal_brownian_motion_simulation_0.25.png> <./fbm_msd_0.25.png> <./fractal_brow
-nian_motion_simulation_0.5.png>] [4 <./fbm_msd_0.5.png> <./fractal_brownian_mot
-ion_simulation_0.75.png> <./fbm_msd_0.75.png>] (ctmc2.aux)
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3 <./fractal_brownian_motion_simulation_0.25.png> <./fbm_msd_0.25.png>]
+[4 <./fractal_brownian_motion_simulation_0.5.png> <./fbm_msd_0.5.png> <./fracta
+l_brownian_motion_simulation_0.75.png>] [5 <./fbm_msd_0.75.png>] (ctmc2.aux)
  ***********
 LaTeX2e <2023-11-01>
 L3 programming layer <2024-01-04>
@@ -387,13 +380,13 @@ Package rerunfilecheck Info: File `ctmc2.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 8620 strings out of 474486
- 137075 string characters out of 5743755
+ 8621 strings out of 474486
+ 137081 string characters out of 5743755
  1946528 words of memory out of 5000000
  30797 multiletter control sequences out of 15000+600000
  564712 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,6n,79p,370b,516s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,7n,79p,856b,521s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmmi10.pfb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmmi5.pfb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/pu
@@ -408,9 +401,9 @@ sers/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.p
 fb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
 /cmsy7.pfb><C:/Users/isila/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/symbols/msbm10.pfb>
-Output written on ctmc2.pdf (4 pages, 801184 bytes).
+Output written on ctmc2.pdf (5 pages, 810612 bytes).
 PDF statistics:
- 116 PDF objects out of 1000 (max. 8388607)
- 16 named destinations out of 1000 (max. 500000)
+ 120 PDF objects out of 1000 (max. 8388607)
+ 17 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
